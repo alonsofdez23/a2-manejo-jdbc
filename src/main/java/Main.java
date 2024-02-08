@@ -1,8 +1,8 @@
 import modelo.entidad.Coche;
 import modelo.persistencia.DaoCocheMySql;
 
-import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -17,22 +17,21 @@ public class Main {
 
             switch (opcion) {
                 case 1:
-                    // TODO
+                    agregarCoche(daoCoche, scanner);
                     break;
                 case 2:
-                    // TODO
+                    borrarCoche(daoCoche, scanner);
                     break;
                 case 3:
-                    // TODO
+                    consultarCoche(daoCoche, scanner);
                     break;
                 case 4:
-                    // TODO
+                    modificarCoche(daoCoche, scanner);
                     break;
                 case 5:
-                    // TODO
+                    listarCoches(daoCoche);
                     break;
                 case 6:
-                    // TODO
                     System.out.println("¡Programa terminado!");
                     break;
                 default:
@@ -62,14 +61,114 @@ public class Main {
         }
     }
 
-//        Coche c = new Coche();
-//        c.setId(1);
-//        c.setMarca("Lamborghini");
-//        c.setModelo("Aventador");
-//        c.setAnyoFabricacion(2019);
-//        c.setKm(13500);
-//
-//        DaoCocheMySql sql = new DaoCocheMySql();
-//        sql.alta(c);
-//    }
+    public static void agregarCoche(DaoCocheMySql daoCoche, Scanner scanner) {
+        System.out.println("Introduzca los datos del nuevo coche:");
+
+        String marca;
+        String modelo;
+        int anyoFabricacion;
+        int km;
+
+        scanner.nextLine();
+        System.out.println("Introduce la marca del coche:");
+        marca = scanner.nextLine();
+        System.out.println("Introduce el modelo del coche:");
+        modelo = scanner.nextLine();
+        System.out.println("Introduce el año de fabricación del coche:");
+        anyoFabricacion = scanner.nextInt();
+        System.out.println("Introduce los km del coche:");
+        km = scanner.nextInt();
+
+        Coche nuevoCoche = new Coche();
+        nuevoCoche.setMarca(marca);
+        nuevoCoche.setModelo(modelo);
+        nuevoCoche.setAnyoFabricacion(anyoFabricacion);
+        nuevoCoche.setKm(km);
+
+        boolean query = daoCoche.alta(nuevoCoche);
+
+        if (!query) {
+            System.out.println("Error al agregar nuevo coche");
+        } else {
+            System.out.println("Coche añadido correctamente");
+        }
+    }
+
+    public static void borrarCoche(DaoCocheMySql daoCoche, Scanner scanner) {
+        System.out.println("Inserte el ID del coche que desea borrar: ");
+        int idBorrar = scanner.nextInt();
+
+        boolean query = daoCoche.borrar(idBorrar);
+
+        if (!query) {
+            System.out.println("Error al borrar coche con ID " + idBorrar);
+        } else {
+            System.out.println("Coche con ID " + idBorrar + " borrado correctamente");
+        }
+    }
+
+    public static void consultarCoche(DaoCocheMySql daoCoche, Scanner scanner) {
+        System.out.println("Inserte el ID del coche que desea consultar: ");
+        int idConsultar = scanner.nextInt();
+
+        Coche cocheQuery = daoCoche.obtener(idConsultar);
+
+        if (cocheQuery == null) {
+            System.out.println("No existe coche con el ID " + idConsultar);
+        } else {
+            System.out.println(cocheQuery);
+        }
+    }
+
+    public static void modificarCoche(DaoCocheMySql daoCoche, Scanner scanner) {
+        System.out.println("Inserte el ID del coche que desea modificar: ");
+        int idModificar = scanner.nextInt();
+
+        Coche cocheQuery = daoCoche.obtener(idModificar);
+
+        if (cocheQuery == null) {
+            System.out.println("No existe coche con el ID " + idModificar);
+        } else {
+            System.out.println(cocheQuery);
+
+            String marca;
+            String modelo;
+            int anyoFabricacion;
+            int km;
+
+            scanner.nextLine();
+            System.out.println("Introduce la nueva marca del coche:");
+            marca = scanner.nextLine();
+            System.out.println("Introduce el nuevo modelo del coche:");
+            modelo = scanner.nextLine();
+            System.out.println("Introduce el nuevo año de fabricación del coche:");
+            anyoFabricacion = scanner.nextInt();
+            System.out.println("Introduce los nuevos km del coche:");
+            km = scanner.nextInt();
+
+            Coche cocheModificado = new Coche();
+            cocheModificado.setId(idModificar);
+            cocheModificado.setMarca(marca);
+            cocheModificado.setModelo(modelo);
+            cocheModificado.setAnyoFabricacion(anyoFabricacion);
+            cocheModificado.setKm(km);
+
+            daoCoche.modificar(cocheModificado);
+
+            System.out.println("Coche con ID " + idModificar + " modificado correctamente");
+        }
+    }
+
+    private static void listarCoches(DaoCocheMySql daoCoche) {
+        List<Coche> listaCoches = daoCoche.listar();
+
+        if (listaCoches.isEmpty()) {
+            System.out.println("No existe ningún coche");
+        } else {
+            for (Coche coche :
+                    listaCoches) {
+                System.out.println(coche);
+            }
+        }
+    }
 }

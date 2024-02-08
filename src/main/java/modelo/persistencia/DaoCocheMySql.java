@@ -69,7 +69,7 @@ public class DaoCocheMySql implements DaoCoche {
     }
 
     @Override
-    public boolean baja(int id) {
+    public boolean borrar(int id) {
         if (!abrirConexion()) {
             return false;
         }
