@@ -1,3 +1,5 @@
+package vista;
+
 import modelo.entidad.Coche;
 import modelo.persistencia.DaoCocheMySql;
 
