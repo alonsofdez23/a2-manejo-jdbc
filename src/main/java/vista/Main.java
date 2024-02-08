@@ -1,7 +1,10 @@
 package vista;
 
 import modelo.entidad.Coche;
+import modelo.entidad.Pasajero;
 import modelo.persistencia.DaoCocheMySql;
+import modelo.persistencia.DaoPasajeroMySql;
+import modelo.persistencia.interfaces.DaoPasajero;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -34,13 +37,15 @@ public class Main {
                     listarCoches(daoCoche);
                     break;
                 case 6:
+                    gestionPasajeros(daoCoche, scanner);
+                case 7:
                     System.out.println("¡Programa terminado!");
                     break;
                 default:
                     System.out.println("Opción no válida. Inténtalo de nuevo.");
             }
 
-        } while (opcion != 6);
+        } while (opcion != 7);
     }
 
     private static void mostrarMenu() {
@@ -50,7 +55,130 @@ public class Main {
         System.out.println("3. Consultar coche por ID");
         System.out.println("4. Modificar coche por ID");
         System.out.println("5. Lista de coches");
-        System.out.println("6. Terminar el programa");
+        System.out.println("6. Gestión de pasajeros");
+        System.out.println("7. Terminar el programa");
+    }
+
+    private static void gestionPasajeros(DaoCocheMySql daoCoche, Scanner scanner) {
+        DaoPasajero daoPasajero = new DaoPasajeroMySql();
+
+        while (true) {
+            System.out.println("\n*** Gestión de pasajeros ***");
+            System.out.println("1. Crear nuevo pasajero");
+            System.out.println("2. Borrar pasajero por ID");
+            System.out.println("3. Consultar pasajero por ID");
+            System.out.println("4. Listar todos los pasajeros");
+            System.out.println("5. Añadir pasajero a coche");
+            System.out.println("6. Eliminar pasajero de un coche");
+            System.out.println("7. Listar todos los pasajeros de un coche");
+            System.out.println("8. Atrás");
+
+            int opcionPasajero = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcionPasajero) {
+                case 1:
+                    agregarPasajero(daoPasajero, scanner);
+                    break;
+                case 2:
+                    borrarPasajero(daoPasajero, scanner);
+                    break;
+                case 3:
+                    consultarPasajero(daoPasajero, scanner);
+                    break;
+                case 4:
+                    listarPasajeros(daoPasajero);
+                    break;
+                case 5:
+                    agregarPasajeroACoche(daoCoche, daoPasajero, scanner);
+                    break;
+                case 6:
+                    // TODO
+                    break;
+                case 7:
+                    // TODO
+                    break;
+                case 8:
+                    return;
+                default:
+                    System.out.println("Opción no válida. Inténtalo de nuevo.");
+            }
+        }
+    }
+
+    private static void agregarPasajero(DaoPasajero daoPasajero, Scanner scanner) {
+        System.out.println("Introduzca los datos del nuevo pasajero:");
+
+        String nombre;
+        int edad;
+        double peso;
+
+        System.out.println("Introduce el nombre del pasajero:");
+        nombre = scanner.nextLine();
+        System.out.println("Introduce la edad del pasajero:");
+        edad = scanner.nextInt();
+        System.out.println("Introduce el peso del pasajero:");
+        peso = scanner.nextDouble();
+
+        Pasajero nuevoPasajero = new Pasajero();
+        nuevoPasajero.setNombre(nombre);
+        nuevoPasajero.setEdad(edad);
+        nuevoPasajero.setPeso(peso);
+
+        boolean query = daoPasajero.alta(nuevoPasajero);
+
+        if (!query) {
+            System.out.println("Error al agregar nuevo pasajero");
+        } else {
+            System.out.println("Pasajero añadido correctamente");
+        }
+    }
+
+    private static void borrarPasajero(DaoPasajero daoPasajero, Scanner scanner) {
+        System.out.println("Inserte el ID del pasajero que desea borrar: ");
+        int idBorrar = scanner.nextInt();
+
+        boolean query = daoPasajero.borrar(idBorrar);
+
+        if (!query) {
+            System.out.println("Error al borrar pasajero con ID " + idBorrar);
+        } else {
+            System.out.println("Pasajero con ID " + idBorrar + " borrado correctamente");
+        }
+    }
+
+    private static void consultarPasajero(DaoPasajero daoPasajero, Scanner scanner) {
+        System.out.println("Inserte el ID del pasajero que desea consultar: ");
+        int idConsultar = scanner.nextInt();
+
+        Pasajero pasajeroQuery = daoPasajero.obtener(idConsultar);
+
+        if (pasajeroQuery == null) {
+            System.out.println("No existe pasajero con el ID " + idConsultar);
+        } else {
+            System.out.println(pasajeroQuery);
+        }
+    }
+
+    private static void listarPasajeros(DaoPasajero daoPasajero) {
+        List<Pasajero> listaPasajeros = daoPasajero.listar();
+
+        if (listaPasajeros.isEmpty()) {
+            System.out.println("No existe ningún pasajero");
+        } else {
+            for (Pasajero pasajero :
+                    listaPasajeros) {
+                System.out.println(pasajero);
+            }
+        }
+    }
+
+    private static void agregarPasajeroACoche(DaoCocheMySql daoCoche, DaoPasajero daoPasajero, Scanner scanner) {
+        System.out.println("Introduzca ID del pasajero:");
+        int idPasajero = scanner.nextInt();
+        System.out.println("Eliga un coche por ID entre los siguientes:");
+        listarCoches(daoCoche);
+        int idCoche = scanner.nextInt();
     }
 
     private static int obtenerOpcion(Scanner scanner) {
