@@ -2,6 +2,7 @@ package vista;
 
 import modelo.entidad.Coche;
 import modelo.entidad.Pasajero;
+import modelo.negocio.GestorCoche;
 import modelo.persistencia.DaoCocheMySql;
 import modelo.persistencia.DaoPasajeroMySql;
 import modelo.persistencia.interfaces.DaoCoche;
@@ -14,6 +15,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         DaoCocheMySql daoCoche = new DaoCocheMySql();
+        GestorCoche gestorCoche = new GestorCoche();
         Scanner scanner = new Scanner(System.in);
 
         int opcion;
@@ -23,7 +25,7 @@ public class Main {
 
             switch (opcion) {
                 case 1:
-                    agregarCoche(daoCoche, scanner);
+                    agregarCoche(gestorCoche, scanner);
                     break;
                 case 2:
                     borrarCoche(daoCoche, scanner);
@@ -240,7 +242,7 @@ public class Main {
         }
     }
 
-    public static void agregarCoche(DaoCocheMySql daoCoche, Scanner scanner) {
+    public static void agregarCoche(GestorCoche gestorCoche, Scanner scanner) {
         System.out.println("Introduzca los datos del nuevo coche:");
 
         String marca;
@@ -264,12 +266,14 @@ public class Main {
         nuevoCoche.setAnyoFabricacion(anyoFabricacion);
         nuevoCoche.setKm(km);
 
-        boolean query = daoCoche.alta(nuevoCoche);
+        int query = gestorCoche.alta(nuevoCoche);
 
-        if (!query) {
+        if (query == 0) {
+            System.out.println("Coche añadido correctamente");
+        } else if (query == 1) {
             System.out.println("Error al agregar nuevo coche");
         } else {
-            System.out.println("Coche añadido correctamente");
+            System.out.println("Los campos Marca y Modelo son obligatorios");
         }
     }
 
