@@ -4,6 +4,7 @@ import modelo.entidad.Coche;
 import modelo.entidad.Pasajero;
 import modelo.persistencia.DaoCocheMySql;
 import modelo.persistencia.DaoPasajeroMySql;
+import modelo.persistencia.interfaces.DaoCoche;
 import modelo.persistencia.interfaces.DaoPasajero;
 
 import java.util.InputMismatchException;
@@ -93,10 +94,10 @@ public class Main {
                     agregarPasajeroACoche(daoCoche, daoPasajero, scanner);
                     break;
                 case 6:
-                    // TODO
+                    borrarPasajeroDeCoche(daoCoche, daoPasajero, scanner);
                     break;
                 case 7:
-                    // TODO
+                    listarPasajerosDeCoche(daoPasajero, scanner);
                     break;
                 case 8:
                     return;
@@ -179,6 +180,54 @@ public class Main {
         System.out.println("Eliga un coche por ID entre los siguientes:");
         listarCoches(daoCoche);
         int idCoche = scanner.nextInt();
+
+        boolean query = daoPasajero.agregarPasajeroACoche(idPasajero, idCoche);
+
+        if (!query) {
+            System.out.println("Error al agregar pasajero al coche");
+        } else {
+            System.out.println("Pasajero añadido al coche correctamente");
+        }
+    }
+
+    private static void borrarPasajeroDeCoche(DaoCoche daoCoche, DaoPasajero daoPasajero, Scanner scanner) {
+        // TODO Listar todo los coches y sus pasajeros asociados
+
+        List<Coche> listaCoches = daoCoche.listar();
+
+        for (Coche coche : listaCoches) {
+            System.out.println(coche);
+            List<Pasajero> listaPasajeros = daoPasajero.listarPasajerosDeCoche(coche.getId());
+            for (Pasajero pasajero : listaPasajeros) {
+                System.out.println("   -> " + pasajero);
+            }
+        }
+
+        System.out.println("Introduzca ID del pasajero:");
+        int idPasajero = scanner.nextInt();
+
+        boolean query = daoPasajero.borrarPasajeroDeCoche(idPasajero);
+
+        if (!query) {
+            System.out.println("Error al borrar pasajero del coche");
+        } else {
+            System.out.println("Pasajero borrado del coche correctamente");
+        }
+    }
+
+    private static void listarPasajerosDeCoche(DaoPasajero daoPasajero, Scanner scanner) {
+        System.out.println("Introduzca ID del coche:");
+        int idPasajero = scanner.nextInt();
+
+        List<Pasajero> listaPasajeros = daoPasajero.listarPasajerosDeCoche(idPasajero);
+
+        if (listaPasajeros.isEmpty()) {
+            System.out.println("No existe ningún pasajero para el coche");
+        } else {
+            for (Pasajero pasajero : listaPasajeros) {
+                System.out.println(pasajero);
+            }
+        }
     }
 
     private static int obtenerOpcion(Scanner scanner) {
@@ -295,8 +344,7 @@ public class Main {
         if (listaCoches.isEmpty()) {
             System.out.println("No existe ningún coche");
         } else {
-            for (Coche coche :
-                    listaCoches) {
+            for (Coche coche : listaCoches) {
                 System.out.println(coche);
             }
         }

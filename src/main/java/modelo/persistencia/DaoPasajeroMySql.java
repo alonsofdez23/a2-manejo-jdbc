@@ -159,17 +159,89 @@ public class DaoPasajeroMySql implements DaoPasajero {
     }
 
     @Override
-    public void agregarPasajeroACoche(int idPasajero, int idCoche) {
+    public boolean agregarPasajeroACoche(int idPasajero, int idCoche) {
+        if (!abrirConexion()) {
+            return false;
+        }
+        boolean agregado = true;
 
+        String query = "UPDATE pasajeros SET coche_id = ? WHERE id = ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, idCoche);
+            ps.setInt(2, idPasajero);
+
+            int numeroFilasAfectadas = ps.executeUpdate();
+            if (numeroFilasAfectadas == 0) {
+                agregado = false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Agregar -> Error al agregar pasajero al coche con ID " + idCoche);
+            agregado = false;
+            e.printStackTrace();
+        } finally {
+            cerrarConexion();
+        }
+        return agregado;
     }
 
     @Override
-    public void borrarPasajeroDeCoche(int idPasajero) {
+    public boolean borrarPasajeroDeCoche(int idPasajero) {
+        if (!abrirConexion()) {
+            return false;
+        }
+        boolean borrado = true;
 
+        String query = "UPDATE pasajeros SET coche_id = NULL WHERE id = ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, idPasajero);
+
+            int numeroFilasAfectadas = ps.executeUpdate();
+            if (numeroFilasAfectadas == 0) {
+                borrado = false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Agregar -> Error al borrar pasajero con ID " + idPasajero + " del coche");
+            borrado = false;
+            e.printStackTrace();
+        } finally {
+            cerrarConexion();
+        }
+        return borrado;
     }
 
     @Override
     public List<Pasajero> listarPasajerosDeCoche(int idCoche) {
-        return null;
+        if (!abrirConexion()) {
+            return null;
+        }
+        List<Pasajero> listaPasajeros = new ArrayList<>();
+
+        String query = "SELECT * FROM pasajeros WHERE coche_id = ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, idCoche);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Pasajero pasajero = new Pasajero();
+                pasajero.setId(rs.getInt(1));
+                pasajero.setNombre(rs.getString(2));
+                pasajero.setEdad(rs.getInt(3));
+                pasajero.setPeso(rs.getDouble(4));
+
+                listaPasajeros.add(pasajero);
+            }
+        } catch (SQLException e) {
+            System.out.println("Listar -> Error a obtener los pasajeros");
+            e.printStackTrace();
+        } finally {
+            cerrarConexion();
+        }
+        return listaPasajeros;
     }
 }

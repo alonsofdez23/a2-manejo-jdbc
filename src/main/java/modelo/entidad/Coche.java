@@ -49,7 +49,7 @@ public class Coche {
 
     @Override
     public String toString() {
-        return "modelo.entidad.Coche{" +
+        return "Coche{" +
                 "id=" + id +
                 ", marca='" + marca + '\'' +
                 ", modelo='" + modelo + '\'' +

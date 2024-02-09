@@ -9,7 +9,7 @@ public interface DaoPasajero {
     public boolean borrar(int id);
     public Pasajero obtener(int id);
     public List<Pasajero> listar();
-    public void agregarPasajeroACoche(int idPasajero, int idCoche);
-    public void borrarPasajeroDeCoche(int idPasajero);
+    public boolean agregarPasajeroACoche(int idPasajero, int idCoche);
+    public boolean borrarPasajeroDeCoche(int idPasajero);
     public List<Pasajero> listarPasajerosDeCoche(int idCoche);
 }
