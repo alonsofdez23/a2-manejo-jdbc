@@ -8,6 +8,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La clase DaoPasajeroMySql implementa la interfaz DaoPasajero y proporciona
+ * implementaciones específicas para operaciones CRUD relacionadas con la entidad Pasajero
+ * utilizando una base de datos MySQL.
+ */
 public class DaoPasajeroMySql implements DaoPasajero {
     private Connection connection;
 
@@ -158,6 +163,13 @@ public class DaoPasajeroMySql implements DaoPasajero {
         return listaPasajeros;
     }
 
+    /**
+     * Asocia un pasajero a un coche en la base de datos.
+     *
+     * @param idPasajero El ID del pasajero.
+     * @param idCoche El ID del coche al que se va a asociar el pasajero.
+     * @return `true` si la asociación se realizó correctamente, `false` en caso contrario.
+     */
     @Override
     public boolean agregarPasajeroACoche(int idPasajero, int idCoche) {
         if (!abrirConexion()) {
@@ -165,13 +177,16 @@ public class DaoPasajeroMySql implements DaoPasajero {
         }
         boolean agregado = true;
 
+        // Query SQL para actualizar el campo 'coche_id' del pasajero con el identificador dado en la tabla pasajeros.
         String query = "UPDATE pasajeros SET coche_id = ? WHERE id = ?";
 
         try {
+            // Prepara la sentencia SQL.
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, idCoche);
             ps.setInt(2, idPasajero);
 
+            // Ejecuta la sentencia y verifica si se afectaron filas en la base de datos.
             int numeroFilasAfectadas = ps.executeUpdate();
             if (numeroFilasAfectadas == 0) {
                 agregado = false;
@@ -186,6 +201,12 @@ public class DaoPasajeroMySql implements DaoPasajero {
         return agregado;
     }
 
+    /**
+     * Desasocia un pasajero de un coche en la base de datos.
+     *
+     * @param idPasajero El ID del pasajero que se va a desasociar del coche.
+     * @return `true` si la desasociación se realizó correctamente, `false` en caso contrario.
+     */
     @Override
     public boolean borrarPasajeroDeCoche(int idPasajero) {
         if (!abrirConexion()) {
@@ -193,6 +214,7 @@ public class DaoPasajeroMySql implements DaoPasajero {
         }
         boolean borrado = true;
 
+        // Query SQL para actualizar el campo 'coche_id' del pasajero a NULL.
         String query = "UPDATE pasajeros SET coche_id = NULL WHERE id = ?";
 
         try {
@@ -213,6 +235,12 @@ public class DaoPasajeroMySql implements DaoPasajero {
         return borrado;
     }
 
+    /**
+     * Obtiene una lista de pasajeros asociados a un coche en la base de datos.
+     *
+     * @param idCoche El ID del coche.
+     * @return Una lista de objetos Pasajero asociados al coche, o una lista vacía si no hay asociaciones.
+     */
     @Override
     public List<Pasajero> listarPasajerosDeCoche(int idCoche) {
         if (!abrirConexion()) {
@@ -220,6 +248,7 @@ public class DaoPasajeroMySql implements DaoPasajero {
         }
         List<Pasajero> listaPasajeros = new ArrayList<>();
 
+        // Query SQL para seleccionar pasajeros de un coche específico.
         String query = "SELECT * FROM pasajeros WHERE coche_id = ?";
 
         try {

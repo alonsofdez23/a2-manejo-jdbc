@@ -7,9 +7,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La clase DaoCocheMySql implementa la interfaz DaoCoche y proporciona
+ * implementaciones específicas para operaciones CRUD relacionadas con la entidad Coche
+ * utilizando una base de datos MySQL.
+ */
 public class DaoCocheMySql implements DaoCoche {
     private Connection connection;
 
+    /**
+     * Abre una conexión a la base de datos utilizando la configuración proporcionada.
+     *
+     * @return `true` si la conexión se estableció correctamente, `false` en caso contrario.
+     */
     public boolean abrirConexion() {
         Configuracion conf = new Configuracion();
         conf.inicializar();
@@ -27,6 +37,11 @@ public class DaoCocheMySql implements DaoCoche {
         return true;
     }
 
+    /**
+     * Cierra la conexión a la base de datos.
+     *
+     * @return `true` si la conexión se cerró correctamente, `false` en caso contrario.
+     */
     public boolean cerrarConexion() {
         try {
             connection.close();
@@ -39,21 +54,25 @@ public class DaoCocheMySql implements DaoCoche {
 
     @Override
     public boolean alta(Coche c) {
+        // Verifica y establece la conexión a la base de datos.
         if (!abrirConexion()) {
             return false;
         }
         boolean alta = true;
 
+        // Query SQL para insertar un nuevo coche en la tabla 'coches'.
         String query = "INSERT INTO coches (marca, modelo, anyo_fabricacion, km)"
                 + " VALUES(?, ?, ?, ?)";
 
         try {
+            // Prepara la sentencia SQL con los valores del coche.
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString(1, c.getMarca());
             ps.setString(2, c.getModelo());
             ps.setInt(3, c.getAnyoFabricacion());
             ps.setInt(4, c.getKm());
 
+            // Ejecuta la sentencia y verifica si se afectaron filas en la base de datos.
             int numeroFilasAfectadas = ps.executeUpdate();
             if (numeroFilasAfectadas == 0) {
                 alta = false;
@@ -63,6 +82,7 @@ public class DaoCocheMySql implements DaoCoche {
             alta = false;
             e.printStackTrace();
         } finally {
+            // Cierra la conexión a la base de datos.
             cerrarConexion();
         }
         return alta;
@@ -172,8 +192,10 @@ public class DaoCocheMySql implements DaoCoche {
         try {
             PreparedStatement ps = connection.prepareStatement(query);
 
+            // Ejecuta la sentencia y procesa los resultados.
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                // Crea un objeto Coche para cada resultado y lo agrega a la lista.
                 Coche coche = new Coche();
                 coche.setId(rs.getInt(1));
                 coche.setMarca(rs.getString(2));

@@ -8,7 +8,7 @@ public class Configuracion {
     private Properties properties;
 
     public void inicializar() {
-        //Esta manera es cuando queremos acceder a un fichero properties que esta
+        //Esta manera es cuando queremos acceder a un fichero properties que está
         //dentro de nuestro "classpath"
         try (InputStream ficheroPropiedades = Configuracion.class.getClassLoader()
                 .getResourceAsStream("config.properties");){

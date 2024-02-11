@@ -13,6 +13,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+    /**
+     * Método principal que inicia la aplicación y maneja las opciones del menú principal.
+     *
+     * @param args Argumentos de la línea de comandos.
+     */
     public static void main(String[] args) {
         DaoCocheMySql daoCoche = new DaoCocheMySql();
         GestorCoche gestorCoche = new GestorCoche();
@@ -109,6 +114,12 @@ public class Main {
         }
     }
 
+    /**
+     * Agrega un nuevo pasajero a la base de datos.
+     *
+     * @param daoPasajero El objeto DaoPasajero utilizado para interactuar con la base de datos.
+     * @param scanner     El objeto Scanner utilizado para la entrada del usuario.
+     */
     private static void agregarPasajero(DaoPasajero daoPasajero, Scanner scanner) {
         System.out.println("Introduzca los datos del nuevo pasajero:");
 
@@ -137,6 +148,12 @@ public class Main {
         }
     }
 
+    /**
+     * Borra un pasajero de la base de datos por su ID.
+     *
+     * @param daoPasajero El objeto DaoPasajero utilizado para interactuar con la base de datos.
+     * @param scanner     El objeto Scanner utilizado para la entrada del usuario.
+     */
     private static void borrarPasajero(DaoPasajero daoPasajero, Scanner scanner) {
         System.out.println("Inserte el ID del pasajero que desea borrar: ");
         int idBorrar = scanner.nextInt();
@@ -150,6 +167,12 @@ public class Main {
         }
     }
 
+    /**
+     * Consulta y muestra la información de un pasajero por su ID.
+     *
+     * @param daoPasajero El objeto DaoPasajero utilizado para interactuar con la base de datos.
+     * @param scanner     El objeto Scanner utilizado para la entrada del usuario.
+     */
     private static void consultarPasajero(DaoPasajero daoPasajero, Scanner scanner) {
         System.out.println("Inserte el ID del pasajero que desea consultar: ");
         int idConsultar = scanner.nextInt();
@@ -163,6 +186,11 @@ public class Main {
         }
     }
 
+    /**
+     * Lista todos los pasajeros almacenados en la base de datos.
+     *
+     * @param daoPasajero El objeto DaoPasajero utilizado para interactuar con la base de datos.
+     */
     private static void listarPasajeros(DaoPasajero daoPasajero) {
         List<Pasajero> listaPasajeros = daoPasajero.listar();
 
@@ -176,6 +204,13 @@ public class Main {
         }
     }
 
+    /**
+     * Agrega un pasajero a un coche en la base de datos.
+     *
+     * @param daoCoche    El objeto DaoCoche utilizado para interactuar con la base de datos.
+     * @param daoPasajero El objeto DaoPasajero utilizado para interactuar con la base de datos.
+     * @param scanner     El objeto Scanner utilizado para la entrada del usuario.
+     */
     private static void agregarPasajeroACoche(DaoCocheMySql daoCoche, DaoPasajero daoPasajero, Scanner scanner) {
         System.out.println("Introduzca ID del pasajero:");
         int idPasajero = scanner.nextInt();
@@ -192,11 +227,18 @@ public class Main {
         }
     }
 
+    /**
+     * Borra un pasajero de un coche en la base de datos.
+     *
+     * @param daoCoche    El objeto DaoCoche utilizado para interactuar con la base de datos.
+     * @param daoPasajero El objeto DaoPasajero utilizado para interactuar con la base de datos.
+     * @param scanner     El objeto Scanner utilizado para la entrada del usuario.
+     */
     private static void borrarPasajeroDeCoche(DaoCoche daoCoche, DaoPasajero daoPasajero, Scanner scanner) {
-        // TODO Listar todo los coches y sus pasajeros asociados
-
+        // Listar todos los coches y sus pasajeros asociados
         List<Coche> listaCoches = daoCoche.listar();
 
+        // Recorremos la lista de coches, mostramos cada uno por pantalla y si este tuviera pasajeros los lista y muestra por pantalla también.
         for (Coche coche : listaCoches) {
             System.out.println(coche);
             List<Pasajero> listaPasajeros = daoPasajero.listarPasajerosDeCoche(coche.getId());
@@ -217,14 +259,20 @@ public class Main {
         }
     }
 
+    /**
+     * Lista los pasajeros asociados a un coche en la base de datos.
+     *
+     * @param daoPasajero El objeto DaoPasajero utilizado para interactuar con la base de datos.
+     * @param scanner     El objeto Scanner utilizado para la entrada del usuario.
+     */
     private static void listarPasajerosDeCoche(DaoPasajero daoPasajero, Scanner scanner) {
         System.out.println("Introduzca ID del coche:");
-        int idPasajero = scanner.nextInt();
+        int idCoche = scanner.nextInt();
 
-        List<Pasajero> listaPasajeros = daoPasajero.listarPasajerosDeCoche(idPasajero);
+        List<Pasajero> listaPasajeros = daoPasajero.listarPasajerosDeCoche(idCoche);
 
         if (listaPasajeros.isEmpty()) {
-            System.out.println("No existe ningún pasajero para el coche");
+            System.out.println("No existe ningún pasajero para el coche con ID " + idCoche);
         } else {
             for (Pasajero pasajero : listaPasajeros) {
                 System.out.println(pasajero);
@@ -266,6 +314,7 @@ public class Main {
         nuevoCoche.setAnyoFabricacion(anyoFabricacion);
         nuevoCoche.setKm(km);
 
+        // Implementamos la capa de negocio para cumplir el requerimiento 3.
         int query = gestorCoche.alta(nuevoCoche);
 
         if (query == 0) {
